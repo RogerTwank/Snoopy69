@@ -1,2 +1,3 @@
 # Snoopy69
-Code and data from Apollo 10 LM descent stage simulations
+Code and results from Apollo 10 LM descent stage monte carlo simulation run
+Start by reading the readme.pdf
