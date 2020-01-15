@@ -1,0 +1,33 @@
+
+
+Create Spacecraft A10LEM;
+GMAT A10LEM.DateFormat = UTCGregorian;
+GMAT A10LEM.Epoch = '22 May 1969 23:34:16.900'; % From Mission Report Table 6-II 
+GMAT A10LEM.CoordinateSystem = LunaFixed;
+GMAT A10LEM.DisplayStateType = Planetodetic;
+GMAT A10LEM.PlanetodeticRMAG = 1799.462645;
+GMAT A10LEM.PlanetodeticLON = 51.42703686;
+GMAT A10LEM.PlanetodeticLAT = 0.880244882;
+GMAT A10LEM.PlanetodeticVMAG = 1.697020554;
+GMAT A10LEM.PlanetodeticAZI = -90.36949743;
+GMAT A10LEM.PlanetodeticHFPA = -2.981620739;
+
+
+    % actually total mass at staging including unused propellants
+GMAT A10LEM.DryMass = 10071;
+
+GMAT A10LEM.Cd = 2.2;
+GMAT A10LEM.Cr = 1.8;
+GMAT A10LEM.DragArea = 15;
+GMAT A10LEM.SRPArea = 10;   % worst case
+GMAT A10LEM.NAIFId = -10001001;
+GMAT A10LEM.NAIFIdReferenceFrame = -9001001;
+GMAT A10LEM.OrbitColor = Red;
+GMAT A10LEM.TargetColor = Teal;
+GMAT A10LEM.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT A10LEM.CdSigma = 1e+070;
+GMAT A10LEM.CrSigma = 1e+070;
+GMAT A10LEM.Id = 'Snoopy';
+GMAT A10LEM.Attitude = CoordinateSystemFixed;
+GMAT A10LEM.SPADSRPScaleFactor = 1;
+

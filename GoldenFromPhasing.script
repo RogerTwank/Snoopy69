@@ -1,0 +1,114 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2019-11-30 16:11:12
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft A10LEM;
+GMAT A10LEM.DateFormat = UTCGregorian;
+GMAT A10LEM.Epoch = '22 May 1969 21:48:05.900';
+GMAT A10LEM.CoordinateSystem = LunaFixed;
+GMAT A10LEM.DisplayStateType = Planetodetic;
+GMAT A10LEM.PlanetodeticRMAG = 1773.28;				  % From Mission Report Table 6-II Phasing Cutoff, using 1969 mean radius
+GMAT A10LEM.PlanetodeticLON = -13.67000000000039;     % From Mission Report Table 6-II Phasing Cutoff
+GMAT A10LEM.PlanetodeticLAT = -0.3399999999996199;    % From Mission Report Table 6-II Phasing Cutoff
+GMAT A10LEM.PlanetodeticVMAG = 1.7291;				  % Tweaked to match stage sighting longitude on May 24th
+GMAT A10LEM.PlanetodeticAZI = -91.05000000000001;     % From Mission Report Table 6-II Phasing Cutoff
+GMAT A10LEM.PlanetodeticHFPA = 1.880000000000081;     % From Mission Report Table 6-II Phasing Cutoff
+
+    % actually total mass at staging including unused propellants
+GMAT A10LEM.DryMass = 10071;
+
+GMAT A10LEM.Cd = 2.2;
+GMAT A10LEM.Cr = 1.8;
+GMAT A10LEM.DragArea = 15;
+GMAT A10LEM.SRPArea = 10;
+GMAT A10LEM.NAIFId = -10001001;
+GMAT A10LEM.NAIFIdReferenceFrame = -9001001;
+GMAT A10LEM.OrbitColor = Red;
+GMAT A10LEM.TargetColor = Teal;
+GMAT A10LEM.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT A10LEM.CdSigma = 1e+070;
+GMAT A10LEM.CrSigma = 1e+070;
+GMAT A10LEM.Id = 'SatId';
+GMAT A10LEM.Attitude = CoordinateSystemFixed;
+GMAT A10LEM.SPADSRPScaleFactor = 1;
+
+
+
+Create ReportFile HighsAndLows;
+GMAT HighsAndLows.SolverIterations = Current;
+GMAT HighsAndLows.UpperLeft = [ 0 0 ];
+GMAT HighsAndLows.Size = [ 0 0 ];
+GMAT HighsAndLows.RelativeZOrder = 0;
+GMAT HighsAndLows.Maximized = false;
+GMAT HighsAndLows.Filename = 'perilune.csv';
+GMAT HighsAndLows.Precision = 16;
+GMAT HighsAndLows.Add = {A10LEM.UTCModJulian, A10LEM.UTCGregorian, A10LEM.Luna.Longitude, A10LEM.Luna.Latitude, A10LEM.Luna.Altitude};
+GMAT HighsAndLows.WriteHeaders = true;
+GMAT HighsAndLows.LeftJustify = On;
+GMAT HighsAndLows.ZeroFill = Off;
+GMAT HighsAndLows.FixedWidth = false;
+GMAT HighsAndLows.Delimiter = ',';
+GMAT HighsAndLows.ColumnWidth = 23;
+GMAT HighsAndLows.WriteReport = false;
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel MoonProp_ForceModel;
+GMAT MoonProp_ForceModel.CentralBody = Luna;
+GMAT MoonProp_ForceModel.PrimaryBodies = {Luna};
+GMAT MoonProp_ForceModel.PointMasses = {Earth, Jupiter, Mars, Sun};
+GMAT MoonProp_ForceModel.Drag = None;
+GMAT MoonProp_ForceModel.SRP = On;
+GMAT MoonProp_ForceModel.RelativisticCorrection = Off;
+GMAT MoonProp_ForceModel.ErrorControl = RSSState;
+GMAT MoonProp_ForceModel.GravityField.Luna.Degree = 200;
+GMAT MoonProp_ForceModel.GravityField.Luna.Order = 200;
+GMAT MoonProp_ForceModel.GravityField.Luna.StmLimit = 200;
+GMAT MoonProp_ForceModel.GravityField.Luna.PotentialFile = 'C:\Users\jim\AppData\Local\GMAT\R2018a\data\gravity\luna\jggrx_0420a_sha.tab';
+GMAT MoonProp_ForceModel.GravityField.Luna.TideModel = 'None';
+GMAT MoonProp_ForceModel.SRP.Flux = 1367;
+GMAT MoonProp_ForceModel.SRP.SRPModel = Spherical;
+GMAT MoonProp_ForceModel.SRP.Nominal_Sun = 149597870.691;
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator MoonProp;
+GMAT MoonProp.FM = MoonProp_ForceModel;
+GMAT MoonProp.Type = PrinceDormand78;
+GMAT MoonProp.InitialStepSize = 0.01;
+GMAT MoonProp.Accuracy = 9.999999999999999e-012;
+GMAT MoonProp.MinStep = 0.001;
+GMAT MoonProp.MaxStep = 100;
+GMAT MoonProp.MaxStepAttempts = 50;
+GMAT MoonProp.StopIfAccuracyIsViolated = true;
+
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem MoonInertial;
+GMAT MoonInertial.Origin = Luna;
+GMAT MoonInertial.Axes = BodyInertial;
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+Propagate 'Start-at-Phasing' MoonProp(A10LEM) {A10LEM.ElapsedSecs = 0};
+
+		% simulate 50 years...requires ~1.7 days on my laptop
+While A10LEM.ElapsedDays < 18600 & A10LEM.Earth.Altitude > 0
+   Propagate 'Prop2Apo' MoonProp(A10LEM) {A10LEM.Luna.Apoapsis};
+   Propagate 'Prop2Peri' MoonProp(A10LEM) {A10LEM.Luna.Periapsis};
+   Report 'ReportPeri' HighsAndLows A10LEM.A1ModJulian A10LEM.UTCGregorian A10LEM.Luna.Longitude A10LEM.Luna.Latitude A10LEM.Luna.Altitude;
+EndWhile;
+Stop;
