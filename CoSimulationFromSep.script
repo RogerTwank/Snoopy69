@@ -1,0 +1,174 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2019-11-30 16:11:12
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+% Simulated location of stage at the time of CSM/Ascent final sep
+Create Spacecraft A10LEM;
+GMAT A10LEM.DateFormat = UTCGregorian;
+GMAT A10LEM.Epoch = '23 May 1969 05:32:29.900';  % The moment of CSM/Ascent final sep
+GMAT A10LEM.CoordinateSystem = LunaFixed;
+GMAT A10LEM.DisplayStateType = Planetodetic;
+GMAT A10LEM.PlanetodeticRMAG = 1975.3078092007;
+GMAT A10LEM.PlanetodeticLON = 116.8057530194941;
+GMAT A10LEM.PlanetodeticLAT = 0.9768299029297789;
+GMAT A10LEM.PlanetodeticVMAG = 1.562208423316024;
+GMAT A10LEM.PlanetodeticAZI = -89.55887468353517;
+GMAT A10LEM.PlanetodeticHFPA = -4.798979754453953;
+GMAT A10LEM.DryMass = 850;
+GMAT A10LEM.Cd = 2.2;
+GMAT A10LEM.Cr = 1.8;
+GMAT A10LEM.DragArea = 15;
+GMAT A10LEM.SRPArea = 1;
+GMAT A10LEM.NAIFId = -10013001;
+GMAT A10LEM.NAIFIdReferenceFrame = -9013001;
+GMAT A10LEM.OrbitColor = Red;
+GMAT A10LEM.TargetColor = Teal;
+GMAT A10LEM.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT A10LEM.CdSigma = 1e+070;
+GMAT A10LEM.CrSigma = 1e+070;
+GMAT A10LEM.Id = 'SatId';
+GMAT A10LEM.Attitude = CoordinateSystemFixed;
+GMAT A10LEM.SPADSRPScaleFactor = 1;
+GMAT A10LEM.ModelFile = 'aura.3ds';
+GMAT A10LEM.ModelOffsetX = 0;
+GMAT A10LEM.ModelOffsetY = 0;
+GMAT A10LEM.ModelOffsetZ = 0;
+GMAT A10LEM.ModelRotationX = 0;
+GMAT A10LEM.ModelRotationY = 0;
+GMAT A10LEM.ModelRotationZ = 0;
+GMAT A10LEM.ModelScale = 1;
+GMAT A10LEM.AttitudeDisplayStateType = 'Quaternion';
+GMAT A10LEM.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT A10LEM.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT A10LEM.EulerAngleSequence = '321';
+
+% orbit parameters from Mission Report Table 6-II at LM final separation
+Create Spacecraft A10CSM;
+GMAT A10CSM.DateFormat = UTCGregorian;
+GMAT A10CSM.Epoch = '23 May 1969 05:32:29.900';
+GMAT A10CSM.CoordinateSystem = LunaFixed;
+GMAT A10CSM.DisplayStateType = Planetodetic;
+GMAT A10CSM.PlanetodeticRMAG = 1844.770000000015;
+GMAT A10CSM.PlanetodeticLON = 22.94000000000046;
+GMAT A10CSM.PlanetodeticLAT = 0.6700000000000744;
+GMAT A10CSM.PlanetodeticVMAG = 1.63705;  % tweaked for intertial and the right longitude at the stage sighting
+GMAT A10CSM.PlanetodeticAZI = -90.95000862866829;
+GMAT A10CSM.PlanetodeticHFPA = 0.210001901942789;
+GMAT A10CSM.DryMass = 850;
+GMAT A10CSM.Cd = 2.2;
+GMAT A10CSM.Cr = 1.8;
+GMAT A10CSM.DragArea = 15;
+GMAT A10CSM.SRPArea = 1;
+GMAT A10CSM.NAIFId = -10014001;
+GMAT A10CSM.NAIFIdReferenceFrame = -9014001;
+GMAT A10CSM.OrbitColor = Green;
+GMAT A10CSM.TargetColor = LightGray;
+GMAT A10CSM.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT A10CSM.CdSigma = 1e+070;
+GMAT A10CSM.CrSigma = 1e+070;
+GMAT A10CSM.Id = 'SatId';
+GMAT A10CSM.Attitude = CoordinateSystemFixed;
+GMAT A10CSM.SPADSRPScaleFactor = 1;
+GMAT A10CSM.ModelFile = 'aura.3ds';
+GMAT A10CSM.ModelOffsetX = 0;
+GMAT A10CSM.ModelOffsetY = 0;
+GMAT A10CSM.ModelOffsetZ = 0;
+GMAT A10CSM.ModelRotationX = 0;
+GMAT A10CSM.ModelRotationY = 0;
+GMAT A10CSM.ModelRotationZ = 0;
+GMAT A10CSM.ModelScale = 1;
+GMAT A10CSM.AttitudeDisplayStateType = 'Quaternion';
+GMAT A10CSM.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT A10CSM.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT A10CSM.EulerAngleSequence = '321';
+
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel MoonProp_ForceModel;
+GMAT MoonProp_ForceModel.CentralBody = Luna;
+GMAT MoonProp_ForceModel.PrimaryBodies = {Luna};
+GMAT MoonProp_ForceModel.PointMasses = {Earth, Jupiter, Mars, Sun};
+GMAT MoonProp_ForceModel.Drag = None;
+GMAT MoonProp_ForceModel.SRP = On;
+GMAT MoonProp_ForceModel.RelativisticCorrection = Off;
+GMAT MoonProp_ForceModel.ErrorControl = RSSState;
+GMAT MoonProp_ForceModel.GravityField.Luna.Degree = 200;
+GMAT MoonProp_ForceModel.GravityField.Luna.Order = 200;
+GMAT MoonProp_ForceModel.GravityField.Luna.StmLimit = 200;
+GMAT MoonProp_ForceModel.GravityField.Luna.PotentialFile = 'C:\Users\jim\AppData\Local\GMAT\R2018a\data\gravity\luna\jggrx_0420a_sha.tab';
+GMAT MoonProp_ForceModel.GravityField.Luna.TideModel = 'None';
+GMAT MoonProp_ForceModel.SRP.Flux = 1367;
+GMAT MoonProp_ForceModel.SRP.SRPModel = Spherical;
+GMAT MoonProp_ForceModel.SRP.Nominal_Sun = 149597870.691;
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator MoonProp;
+GMAT MoonProp.FM = MoonProp_ForceModel;
+GMAT MoonProp.Type = PrinceDormand78;
+GMAT MoonProp.InitialStepSize = 0.01;
+GMAT MoonProp.Accuracy = 9.999999999999999e-012;
+GMAT MoonProp.MinStep = 0.001;
+GMAT MoonProp.MaxStep = 100;
+GMAT MoonProp.MaxStepAttempts = 50;
+GMAT MoonProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem LunaFixed;
+GMAT LunaFixed.Origin = Luna;
+GMAT LunaFixed.Axes = BodyFixed;
+
+Create CoordinateSystem MoonInertial;
+GMAT MoonInertial.Origin = Luna;
+GMAT MoonInertial.Axes = BodyInertial;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create ReportFile Cosim;
+GMAT Cosim.SolverIterations = Current;
+GMAT Cosim.UpperLeft = [ 0 0 ];
+GMAT Cosim.Size = [ 0 0 ];
+GMAT Cosim.RelativeZOrder = 0;
+GMAT Cosim.Maximized = false;
+GMAT Cosim.Filename = 'CoSim.csv';
+GMAT Cosim.Precision = 16;
+GMAT Cosim.Add = {A10LEM.UTCModJulian, A10LEM.UTCGregorian, A10LEM.Luna.Longitude, A10LEM.Luna.Latitude, A10LEM.Luna.Altitude, A10CSM.Luna.Altitude, A10CSM.Luna.Longitude, A10CSM.Luna.Latitude, A10CSM.LunaFixed.PlanetodeticAZI};
+GMAT Cosim.WriteHeaders = true;
+GMAT Cosim.LeftJustify = On;
+GMAT Cosim.ZeroFill = Off;
+GMAT Cosim.FixedWidth = false;
+GMAT Cosim.Delimiter = ',';
+GMAT Cosim.ColumnWidth = 23;
+GMAT Cosim.WriteReport = true;
+
+%----------------------------------------
+%---------- Arrays, Variables, Strings
+%----------------------------------------
+Create Variable I;
+
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+Propagate 'Prop2StaffSighting' Synchronized MoonProp(A10LEM) MoonProp(A10CSM) {A10LEM.ElapsedSecs = 84760.1};
+Report 'ReportLoc' Cosim A10LEM.A1ModJulian A10LEM.UTCGregorian A10LEM.Luna.Longitude A10LEM.Luna.Latitude A10LEM.Luna.Altitude A10CSM.Luna.Altitude A10CSM.Luna.Longitude A10CSM.Luna.Latitude;
+Propagate 'Prop2TEI' Synchronized MoonProp(A10LEM) MoonProp(A10CSM) {A10LEM.ElapsedSecs = 19218.9};
+Report 'ReportLoc' Cosim A10LEM.A1ModJulian A10LEM.UTCGregorian A10LEM.Luna.Longitude A10LEM.Luna.Latitude A10LEM.Luna.Altitude A10CSM.Luna.Altitude A10CSM.Luna.Longitude A10CSM.Luna.Latitude;
+Stop;
